@@ -757,10 +757,7 @@ Tensor miopen_convolution_forward(
   checkAllSameType(c, {input, weight});
   checkAllSameGPU(c, {input, weight});
 
-  auto memory_format = at::MemoryFormat::Contiguous;
-  if (miopen_conv_use_channels_last(*input, *weight)) {
-    memory_format = (weight->ndimension() == 5) ? /*at::MemoryFormat::ChannelsLast3d*/at::MemoryFormat::Contiguous : at::MemoryFormat::ChannelsLast;
-  }
+  auto memory_format = miopen_conv_suggest_memory_format(*input, *weight);
 
   Tensor output_t = at::detail::empty_cuda(
       conv_output_size(input->sizes(), weight->sizes(),
@@ -865,10 +862,7 @@ Tensor miopen_depthwise_convolution_forward(
   checkAllSameType(c, {input, weight});
   checkAllSameGPU(c, {input, weight});
 
-  auto memory_format = at::MemoryFormat::Contiguous;
-  if (miopen_conv_use_channels_last(*input, *weight)) {
-    memory_format = (weight->ndimension() == 5) ? /*at::MemoryFormat::ChannelsLast3d*/at::MemoryFormat::Contiguous : at::MemoryFormat::ChannelsLast;
-  }
+  auto memory_format = miopen_conv_suggest_memory_format(*input, *weight);
 
   Tensor output_t = at::detail::empty_cuda(
       conv_output_size(input->sizes(), weight->sizes(),
@@ -1065,10 +1059,7 @@ Tensor miopen_depthwise_convolution_backward_weight(
   checkAllSameType(c, {grad_output, input});
   checkAllSameGPU(c, {grad_output, input});
 
-  auto memory_format = at::MemoryFormat::Contiguous;
-  if (miopen_conv_use_channels_last(*input, *grad_output)) {
-    memory_format = (input->ndimension() == 5) ? /*at::MemoryFormat::ChannelsLast3d*/at::MemoryFormat::Contiguous : at::MemoryFormat::ChannelsLast;
-  }
+  auto memory_format = miopen_conv_suggest_memory_format(*input, *grad_output);
 
   Tensor grad_output_contig_t = grad_output->contiguous(memory_format);
   // Make sure that NC11 strides follow formula
@@ -1118,10 +1109,7 @@ Tensor miopen_convolution_backward_weight(
   checkAllSameType(c, {grad_output, input});
   checkAllSameGPU(c, {grad_output, input});
 
-  auto memory_format = at::MemoryFormat::Contiguous;
-  if (miopen_conv_use_channels_last(*input, *grad_output)) {
-    memory_format = (input->ndimension() == 5) ? /*at::MemoryFormat::ChannelsLast3d*/at::MemoryFormat::Contiguous : at::MemoryFormat::ChannelsLast;
-  }
+  auto memory_format = miopen_conv_suggest_memory_format(*input, *grad_output);
 
   Tensor grad_output_contig_t = grad_output->contiguous(memory_format);
   // Make sure that NC11 strides follow formula
@@ -1271,10 +1259,7 @@ Tensor miopen_convolution_backward_input(
   checkAllSameType(c, {grad_output, weight});
   checkAllSameGPU(c, {grad_output, weight});
 
-  auto memory_format = at::MemoryFormat::Contiguous;
-  if (miopen_conv_use_channels_last(*grad_output, *weight)) {
-    memory_format = (weight->ndimension() == 5) ? /*at::MemoryFormat::ChannelsLast3d*/at::MemoryFormat::Contiguous : at::MemoryFormat::ChannelsLast;
-  }
+  auto memory_format = miopen_conv_suggest_memory_format(*grad_output, *weight);
 
   Tensor grad_input_t = at::detail::empty_cuda(
       input_size, grad_output->options().memory_format(memory_format));
@@ -1378,10 +1363,7 @@ Tensor miopen_depthwise_convolution_backward_input(
   checkAllSameType(c, {grad_output, weight});
   checkAllSameGPU(c, {grad_output, weight});
 
-  auto memory_format = at::MemoryFormat::Contiguous;
-  if (miopen_conv_use_channels_last(*grad_output, *weight)) {
-    memory_format = (weight->ndimension() == 5) ? /*at::MemoryFormat::ChannelsLast3d*/at::MemoryFormat::Contiguous : at::MemoryFormat::ChannelsLast;
-  }
+  auto memory_format = miopen_conv_suggest_memory_format(*grad_output, *weight);
 
   Tensor grad_input_t = at::detail::empty_cuda(
       input_size, grad_output->options().memory_format(memory_format));
