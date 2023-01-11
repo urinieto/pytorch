@@ -1,0 +1,115 @@
+ir_version: 8
+producer_name: "pytorch"
+producer_version: "CURRENT_VERSION"
+graph {
+  node {
+    output: "onnx::STFT_1"
+    name: "Constant_0"
+    op_type: "Constant"
+    attribute {
+      name: "value"
+      t {
+        data_type: 7
+        raw_data: "\004\000\000\000\000\000\000\000"
+      }
+      type: TENSOR
+    }
+  }
+  node {
+    output: "onnx::STFT_2"
+    name: "Constant_1"
+    op_type: "Constant"
+    attribute {
+      name: "value"
+      t {
+        data_type: 7
+        raw_data: "\020\000\000\000\000\000\000\000"
+      }
+      type: TENSOR
+    }
+  }
+  node {
+    output: "onnx::STFT_3"
+    name: "Constant_2"
+    op_type: "Constant"
+    attribute {
+      name: "value"
+      t {
+        dims: 16
+        data_type: 1
+        raw_data: "\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?\000\000\200?"
+      }
+      type: TENSOR
+    }
+  }
+  node {
+    input: "x"
+    input: "onnx::STFT_1"
+    input: "onnx::STFT_3"
+    input: "onnx::STFT_2"
+    output: "onnx::Transpose_4"
+    name: "STFT_3"
+    op_type: "STFT"
+    attribute {
+      name: "onesided"
+      i: 1
+      type: INT
+    }
+  }
+  node {
+    input: "onnx::Transpose_4"
+    output: "5"
+    name: "Transpose_4"
+    op_type: "Transpose"
+    attribute {
+      name: "perm"
+      ints: 0
+      ints: 2
+      ints: 1
+      ints: 3
+      type: INTS
+    }
+  }
+  name: "torch_jit"
+  input {
+    name: "x"
+    type {
+      tensor_type {
+        elem_type: 1
+        shape {
+          dim {
+            dim_value: 1
+          }
+          dim {
+            dim_value: 32
+          }
+        }
+      }
+    }
+  }
+  output {
+    name: "5"
+    type {
+      tensor_type {
+        elem_type: 1
+        shape {
+          dim {
+            dim_value: 1
+          }
+          dim {
+            dim_value: 9
+          }
+          dim {
+            dim_value: 6
+          }
+          dim {
+            dim_value: 2
+          }
+        }
+      }
+    }
+  }
+}
+opset_import {
+  version: 17
+}

@@ -81,8 +81,7 @@ class TestOperators(common_utils.TestCase):
         m.eval()
         onnx_model_pbtxt = export_to_pbtxt(m, args, **kwargs)
         subname = kwargs.pop("subname", None)
-        # TODO: Redo
-        # self.assertExpected(onnx_model_pbtxt, subname)
+        self.assertExpected(onnx_model_pbtxt, subname)
         if _onnx_dep:
             onnx_model_pb = export_to_pb(m, args, **kwargs)
             import onnx
