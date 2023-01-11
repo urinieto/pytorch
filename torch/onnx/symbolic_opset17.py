@@ -101,7 +101,7 @@ def stft(
 
     Returns
     -------
-    op
+    op : _C.Value
         Operator for torch.stft associated with STFT (ONNX).
     """
     # Checks
