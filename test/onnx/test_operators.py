@@ -100,9 +100,9 @@ class TestOperators(common_utils.TestCase):
                 # Assume:
                 #     1) the old test should be delete before the test.
                 #     2) only one assertONNX in each test, otherwise will override the data.
-                # assert not os.path.exists(output_dir), "{} should not exist!".format(
-                    # output_dir
-                # )
+                assert not os.path.exists(output_dir), "{} should not exist!".format(
+                    output_dir
+                )
                 os.makedirs(output_dir)
                 with open(os.path.join(output_dir, "model.onnx"), "wb") as file:
                     file.write(model_def.SerializeToString())
@@ -117,7 +117,6 @@ class TestOperators(common_utils.TestCase):
                     ) as file:
                         file.write(tensor.SerializeToString())
                 outputs = m(*args)
-
                 if isinstance(outputs, Variable):
                     outputs = (outputs,)
                 for index, var in enumerate(flatten(outputs)):
@@ -126,29 +125,6 @@ class TestOperators(common_utils.TestCase):
                         os.path.join(data_dir, f"output_{index}.pb"), "wb"
                     ) as file:
                         file.write(tensor.SerializeToString())
-
-                import onnxruntime as ort
-
-                sess_options = ort.SessionOptions()
-                sess_options.graph_optimization_level = (
-                    ort.GraphOptimizationLevel.ORT_DISABLE_ALL
-                )
-                session = ort.InferenceSession(
-                    os.path.join(output_dir, "model.onnx"), sess_options,
-                    providers=["CUDAExecutionProvider"]
-                )
-
-                input_names = [x.name for x in session.get_inputs()]
-                output_name = session.get_outputs()[0].name
-                io_binding = session.io_binding()
-
-                io_binding.bind_output(output_name)
-                io_binding.bind_cpu_input(input_names[0], args[0].numpy())
-                session.run_with_iobinding(io_binding)
-                result = io_binding.copy_outputs_to_cpu()[0]
-
-                import numpy as np
-                assert np.allclose(result, outputs[0].numpy(), atol=1e-5)
 
     def assertONNXRaises(self, err, f, args, params=None, **kwargs):
         if params is None:
